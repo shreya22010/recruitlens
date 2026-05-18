@@ -2,7 +2,7 @@ RecruitLens
 
 AI-Powered Resume Screening & Candidate Analysis System
 
-Overview
+## Overview
 
 RecruitLens is a web application that automates the resume screening process using AI. It analyzes resumes, extracts key information, and presents structured insights to help recruiters make faster and better hiring decisions.
 
