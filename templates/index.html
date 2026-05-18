@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RecruitLens</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    background: #c9e4f5;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, #b8ddf0 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 10%, #a8d4f0 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, #b0e4d8 0%, transparent 55%),
+      radial-gradient(ellipse at 10% 80%, #9dcfee 0%, transparent 50%);
+    color: #1a3a4a;
+    padding: 3rem 1rem 4rem;
+  }
+
+  .container { max-width: 980px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 3rem; }
+
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.8);
+    color: #2a6a8a;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    backdrop-filter: blur(8px);
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 6vw, 4.2rem);
+    font-weight: 600;
+    color: #0d2d3d;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  h1 span { color: #2a7a9a; }
+
+  .subtitle {
+    font-size: 15px;
+    color: #3a6070;
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .input-card {
+    background: rgba(255,255,255,0.45);
+    border: 1px solid rgba(255,255,255,0.75);
+    border-radius: 20px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 4px 32px rgba(100,180,220,0.12);
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    color: #4a7a8a;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(180,220,240,0.6);
+    border-radius: 12px;
+    color: #1a3a4a;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 1rem 1.1rem;
+    resize: vertical;
+    min-height: 160px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  textarea::placeholder { color: #7aaabb; }
+  textarea:focus {
+    border-color: rgba(60,160,200,0.5);
+    box-shadow: 0 0 0 3px rgba(60,160,200,0.1);
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.9rem;
+    background: #1a6a8a;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .btn:hover { background: #155a78; }
+  .btn:active { transform: scale(0.99); }
+  .btn:disabled { background: rgba(100,160,190,0.4); color: rgba(255,255,255,0.6); cursor: not-allowed; }
+
+  /* JD Score bar */
+  .jd-score-card {
+    background: rgba(255,255,255,0.45);
+    border: 1px solid rgba(255,255,255,0.75);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .jd-score-left { flex-shrink: 0; text-align: center; }
+
+  .jd-score-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 600;
+    color: #0d2d3d;
+    line-height: 1;
+  }
+
+  .jd-score-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #4a7a8a;
+    margin-top: 2px;
+  }
+
+  .jd-score-right { flex: 1; min-width: 200px; }
+
+  .jd-score-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #4a7a8a;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .jd-bar-track {
+    height: 6px;
+    background: rgba(180,220,240,0.35);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .jd-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #3aaccf, #2a8aaa);
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .jd-feedback {
+    font-size: 13px;
+    color: #3a6070;
+    line-height: 1.6;
+  }
+
+  /* Best fit banner */
+  .best-fit-card {
+    background: linear-gradient(135deg, rgba(42,122,154,0.15), rgba(42,180,160,0.1));
+    border: 1px solid rgba(42,122,154,0.3);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .best-fit-icon {
+    font-size: 1.5rem;
+  }
+
+  .best-fit-text { flex: 1; }
+
+  .best-fit-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #2a7a9a;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .best-fit-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #0d2d3d;
+  }
+
+  .best-fit-reason {
+    font-size: 13px;
+    color: #3a6070;
+    margin-top: 2px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #4a7a8a;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .personas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .persona-card {
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 20px;
+    padding: 1.4rem;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 4px 24px rgba(100,180,220,0.1);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  .persona-card.best-fit-highlight {
+    border-color: rgba(42,122,154,0.4);
+    box-shadow: 0 4px 24px rgba(42,122,154,0.15);
+  }
+
+  .persona-card:nth-child(2) { animation-delay: 0.12s; }
+  .persona-card:nth-child(3) { animation-delay: 0.24s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .persona-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+  }
+
+  .persona-tag {
+    display: inline-block;
+    background: rgba(42,122,154,0.12);
+    color: #1a5a78;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .best-badge {
+    background: rgba(42,154,122,0.15);
+    color: #1a7858;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(42,154,122,0.3);
+  }
+
+  .persona-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #0d2d3d;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .persona-bg {
+    font-size: 13px;
+    color: #4a7080;
+    line-height: 1.65;
+    margin-bottom: 1.1rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid rgba(180,220,240,0.5);
+  }
+
+  .metrics { margin-bottom: 1.1rem; }
+
+  .metric-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 9px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: #5a8a9a;
+    width: 128px;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 5px;
+    background: rgba(180,220,240,0.35);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #3aaccf, #2a8aaa);
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .metric-score {
+    font-size: 11px;
+    color: #2a7a9a;
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .strategy-box {
+    background: rgba(200,235,248,0.35);
+    border: 1px solid rgba(180,220,240,0.5);
+    border-radius: 10px;
+    padding: 0.8rem 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .strategy-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #2a7a9a;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .strategy-text {
+    font-size: 12.5px;
+    color: #3a6070;
+    line-height: 1.6;
+  }
+
+  /* Interview questions */
+  .questions-section { margin-top: 0.5rem; }
+
+  .questions-toggle {
+    background: none;
+    border: 1px solid rgba(42,122,154,0.3);
+    border-radius: 8px;
+    color: #2a7a9a;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s;
+  }
+
+  .questions-toggle:hover { background: rgba(42,122,154,0.08); }
+
+  .questions-list {
+    display: none;
+    margin-top: 0.6rem;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .questions-list.open { display: block; }
+
+  .questions-list li {
+    font-size: 12.5px;
+    color: #3a6070;
+    line-height: 1.6;
+    padding: 6px 0 6px 12px;
+    border-left: 2px solid rgba(42,122,154,0.25);
+    margin-bottom: 6px;
+  }
+
+  /* Export button */
+  .export-btn {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(42,122,154,0.3);
+    border-radius: 12px;
+    color: #1a6a8a;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .export-btn:hover { background: rgba(255,255,255,0.75); }
+
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    color: #4a8a9a;
+    font-size: 14px;
+  }
+
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 1rem;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #2a8aaa;
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  .error {
+    background: rgba(255,220,220,0.5);
+    border: 1px solid rgba(240,160,160,0.5);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    color: #a03030;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  @media print {
+    .btn, .export-btn, .questions-toggle { display: none; }
+    .questions-list { display: block !important; }
+    body { background: white; padding: 1rem; }
+    .persona-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="badge">AI — Powered Persona Analysis</div>
+    <h1>Recruit<span>Lens</span></h1>
+    <p class="subtitle">Paste any job description and instantly generate candidate personas with fit scores, interview strategies, and tailored questions.</p>
+  </header>
+
+  <div class="input-card">
+    <label for="jd">Job Description</label>
+    <textarea id="jd" placeholder="Paste the job description here..."></textarea>
+    <button class="btn" id="analyzeBtn" onclick="analyze()">Generate Personas →</button>
+  </div>
+
+  <div id="output"></div>
+</div>
+
+<script>
+let currentData = null;
+
+function toggleQuestions(btn) {
+  const list = btn.nextElementSibling;
+  const isOpen = list.classList.contains('open');
+  list.classList.toggle('open');
+  btn.textContent = isOpen ? '▸ Show interview questions' : '▾ Hide interview questions';
+}
+
+function exportPDF() {
+  window.print();
+}
+
+async function analyze() {
+  const jd = document.getElementById('jd').value.trim();
+  const output = document.getElementById('output');
+  const btn = document.getElementById('analyzeBtn');
+
+  if (!jd) {
+    output.innerHTML = '<div class="error">Please paste a job description first.</div>';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Analysing...';
+  output.innerHTML = `
+    <div class="loading">
+      <div class="dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <p>Generating candidate personas...</p>
+    </div>`;
+
+  try {
+    const res = await fetch('/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jd })
+    });
+
+    const data = await res.json();
+    currentData = data;
+    const personas = data.personas;
+    const jdScore = data.jd_score;
+    const jdFeedback = data.jd_feedback;
+    const bestFit = data.best_fit;
+    const bestFitReason = data.best_fit_reason;
+
+    let html = '';
+
+    // JD Score card
+    html += `
+      <div class="jd-score-card">
+        <div class="jd-score-left">
+          <div class="jd-score-number">${jdScore}</div>
+          <div class="jd-score-label">JD Score</div>
+        </div>
+        <div class="jd-score-right">
+          <div class="jd-score-title">Job Description Quality</div>
+          <div class="jd-bar-track"><div class="jd-bar-fill" data-width="${jdScore}"></div></div>
+          <div class="jd-feedback">${jdFeedback}</div>
+        </div>
+      </div>`;
+
+    // Best fit banner
+    html += `
+      <div class="best-fit-card">
+        <div class="best-fit-icon">🏆</div>
+        <div class="best-fit-text">
+          <div class="best-fit-label">Best Overall Fit</div>
+          <div class="best-fit-name">${bestFit}</div>
+          <div class="best-fit-reason">${bestFitReason}</div>
+        </div>
+      </div>`;
+
+    // Personas
+    html += '<p class="section-label">Generated Personas</p>';
+    html += '<div class="personas-grid">';
+
+    personas.forEach((p, i) => {
+      const isBest = p.persona === bestFit;
+      html += `
+        <div class="persona-card ${isBest ? 'best-fit-highlight' : ''}">
+          <div class="persona-top">
+            <div class="persona-tag">Persona ${i + 1}</div>
+            ${isBest ? '<div class="best-badge">⭐ Best Fit</div>' : ''}
+          </div>
+          <div class="persona-name">${p.persona}</div>
+          <div class="persona-bg">${p.background}</div>
+          <div class="metrics">
+            ${Object.entries(p.scores).map(([k, v]) => `
+              <div class="metric-row">
+                <div class="metric-label">${k}</div>
+                <div class="bar-track"><div class="bar-fill" data-width="${v}"></div></div>
+                <div class="metric-score">${v}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-label">Interview Strategy</div>
+            <div class="strategy-text">${p.ivy_strategy}</div>
+          </div>
+          <div class="questions-section">
+            <button class="questions-toggle" onclick="toggleQuestions(this)">▸ Show interview questions</button>
+            <ul class="questions-list">
+              ${p.questions.map(q => `<li>${q}</li>`).join('')}
+            </ul>
+          </div>
+        </div>`;
+    });
+
+    html += '</div>';
+
+    // Export button
+    html += `<button class="export-btn" onclick="exportPDF()">⬇ Export as PDF</button>`;
+
+    output.innerHTML = html;
+
+    setTimeout(() => {
+      document.querySelectorAll('.bar-fill, .jd-bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    }, 100);
+
+  } catch (e) {
+    output.innerHTML = '<div class="error">Something went wrong. Check your API key or try again.</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Generate Personas →';
+  }
+}
+</script>
+</body>
+</html>
